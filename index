@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Calendrier des événements SAAQ</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Segoe UI, sans-serif;
+    background:#F5F7FA;
+    color:#343434;
+}
+
+header{
+    background:#007E7E;
+    color:white;
+    padding:20px;
+}
+
+header h1{
+    margin:0;
+}
+
+.filters{
+    display:flex;
+    gap:10px;
+    padding:20px;
+    flex-wrap:wrap;
+}
+
+input,select{
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
+    gap:20px;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:.8rem;
+    color:white;
+}
+
+.congres{background:#007E7E;}
+.colloque{background:#2D9C9C;}
+.symposium{background:#2D9C9C;}
+.sommet{background:#004F4E;}
+.salon{background:#A7DCDD;color:#243B39;}
+
+.date{
+    color:#6B6B6B;
+    margin-top:10px;
+}
+
+footer{
+    background:#213735;
+    color:white;
+    text-align:center;
+    padding:20px;
+    margin-top:30px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Calendrier des événements partenaires SAAQ</h1>
+</header>
+
+<div class="filters">
+<input id="search" placeholder="Recherche...">
+<select id="categorie">
+<option value="">Toutes les catégories</option>
+<option>Congrès</option>
+<option>Colloque</option>
+<option>Symposium</option>
+<option>Sommet</option>
+<option>Salon</option>
+</select>
+</div>
+
+<div class="grid" id="events"></div>
+
+<footer>
+Calendrier des événements partenaires SAAQ
+</footer>
+
+<script>
+
+const events = [
+
+{
+titre:"Rencontre au Sommet 2026",
+categorie:"Congrès",
+date:"9-10 novembre",
+vp:"VPASRR",
+organisateur:"CCAQ"
+},
+
+{
+titre:"L'annuel de l'AMVOQ",
+categorie:"Congrès",
+date:"23-25 octobre",
+vp:"VPASRR",
+organisateur:"AMVOQ"
+},
+
+{
+titre:"Journées francophones de sécurité routière",
+categorie:"Colloque",
+date:"19-21 octobre",
+vp:"VPSA",
+organisateur:"Université de Sherbrooke"
+},
+
+{
+titre:"Congrès ANCAI",
+categorie:"Congrès",
+date:"23-26 avril 2026",
+vp:"VPCRSV",
+organisateur:"ANCAI"
+},
+
+{
+titre:"Congrès APMLQ",
+categorie:"Congrès",
+date:"24-25 avril 2026",
+vp:"VPCRSV",
+organisateur:"APMLQ"
+},
+
+{
+titre:"Congrès ADPQ",
+categorie:"Congrès",
+date:"26-28 mai 2026",
+vp:"VPCRSV",
+organisateur:"ADPQ"
+},
+
+{
+titre:"Congrès APDQ",
+categorie:"Congrès",
+date:"15-17 octobre 2026",
+vp:"VPCRSV",
+organisateur:"APDQ"
+},
+
+{
+titre:"Sommet international Cybersécurité",
+categorie:"Sommet",
+date:"Octobre",
+vp:"DGAIEP",
+organisateur:"Groupe Le Point"
+},
+
+{
+titre:"Symposium Gartner Toronto",
+categorie:"Symposium",
+date:"3-4 novembre 2026",
+vp:"VPEN",
+organisateur:"Gartner"
+},
+
+{
+titre:"JIQ 2026",
+categorie:"Colloque",
+date:"18 novembre 2026",
+vp:"VPEN",
+organisateur:"Réseau Action TI"
+},
+
+{
+titre:"Salon national de l'Éducation",
+categorie:"Salon",
+date:"Fin septembre - début octobre",
+vp:"VPSA",
+organisateur:"Événement Carrières"
+}
+
+];
+
+const container = document.getElementById("events");
+
+function render(){
+
+container.innerHTML="";
+
+const search = document.getElementById("search").value.toLowerCase();
+const categorie = document.getElementById("categorie").value;
+
+events
+.filter(e =>
+e.titre.toLowerCase().includes(search)
+&&
+(categorie === "" || e.categorie === categorie)
+)
+.forEach(event=>{
+
+let cls="congres";
+
+if(event.categorie==="Colloque") cls="colloque";
+if(event.categorie==="Symposium") cls="symposium";
+if(event.categorie==="Sommet") cls="sommet";
+if(event.categorie==="Salon") cls="salon";
+
+container.innerHTML += `
+<div class="card">
+<span class="badge ${cls}">${event.categorie}</span>
+<h3>${event.titre}</h3>
+<p><strong>VP :</strong> ${event.vp}</p>
+<p><strong>Organisateur :</strong> ${event.organisateur}</p>
+<p class="date">${event.date}</p>
+</div>
+`;
+
+});
+
+}
+
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("categorie").addEventListener("change",render);
+
+render();
+
+</script>
+
+</body>
+</html>
