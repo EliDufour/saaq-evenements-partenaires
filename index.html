@@ -149,13 +149,53 @@ background:var(--footer);
 color:white;
 text-align:center;
 }
+.menu{
+    background:#004F4E;
+    padding:10px;
+    display:flex;
+    gap:10px;
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
 
+.menu button{
+    background:#007E7E;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.menu button:hover{
+    background:#007A78;
+}
 </style>
 </head>
 
 <body>
 
 <header>
+ <nav class="menu">
+
+    <button onclick="scrollToSection('dashboard')">
+        📊 Tableau de bord
+    </button>
+
+    <button onclick="scrollToSection('calendar')">
+        📅 Calendrier
+    </button>
+
+    <button onclick="scrollToSection('events')">
+        📋 Événements
+    </button>
+
+    <button onclick="scrollToSection('stats')">
+        📈 Statistiques
+    </button>
+
+</nav>
 <h1>Calendrier des événements partenaires SAAQ</h1>
 <p>Gestion et suivi des événements, congrès, colloques et partenariats</p>
 </header>
