@@ -4,79 +4,150 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calendrier des événements SAAQ</title>
+<title>Calendrier des événements partenaires SAAQ</title>
 
 <style>
 
+:root{
+--primary:#007E7E;
+--primary2:#007A78;
+--primaryDark:#004F4E;
+--text:#343434;
+--bg:#F5F7FA;
+--footer:#213735;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
-    margin:0;
-    font-family:Segoe UI, sans-serif;
-    background:#F5F7FA;
-    color:#343434;
+font-family:Segoe UI, sans-serif;
+background:var(--bg);
+color:var(--text);
 }
 
 header{
-    background:#007E7E;
-    color:white;
-    padding:20px;
+background:linear-gradient(135deg,#007E7E,#004F4E);
+color:white;
+padding:32px;
 }
 
 header h1{
-    margin:0;
+font-size:2rem;
+margin-bottom:8px;
+}
+
+.container{
+max-width:1400px;
+margin:auto;
+padding:20px;
+}
+
+.dashboard{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+margin-bottom:30px;
+}
+
+.kpi{
+background:white;
+padding:20px;
+border-radius:14px;
+box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.kpi h2{
+color:var(--primary);
+font-size:2rem;
 }
 
 .filters{
-    display:flex;
-    gap:10px;
-    padding:20px;
-    flex-wrap:wrap;
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+margin-bottom:25px;
 }
 
 input,select{
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:8px;
+padding:12px;
+border-radius:10px;
+border:1px solid #d9d9d9;
+background:white;
+min-width:220px;
 }
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
-    gap:20px;
-    padding:20px;
+.events{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
+gap:20px;
 }
 
 .card{
-    background:white;
-    border-radius:12px;
-    padding:20px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
+background:white;
+border-radius:14px;
+padding:20px;
+box-shadow:0 3px 12px rgba(0,0,0,.08);
+border-left:6px solid var(--primary);
+transition:0.2s;
+}
+
+.card:hover{
+transform:translateY(-3px);
+}
+
+.card h3{
+margin-bottom:12px;
 }
 
 .badge{
-    display:inline-block;
-    padding:6px 10px;
-    border-radius:20px;
-    font-size:.8rem;
-    color:white;
+display:inline-block;
+padding:6px 12px;
+border-radius:30px;
+font-size:.8rem;
+color:white;
+margin-bottom:12px;
 }
 
-.congres{background:#007E7E;}
-.colloque{background:#2D9C9C;}
-.symposium{background:#2D9C9C;}
-.sommet{background:#004F4E;}
-.salon{background:#A7DCDD;color:#243B39;}
+.congres{
+background:#007E7E;
+}
 
-.date{
-    color:#6B6B6B;
-    margin-top:10px;
+.colloque{
+background:#2D9C9C;
+}
+
+.symposium{
+background:#2D9C9C;
+}
+
+.sommet{
+background:#004F4E;
+}
+
+.salon{
+background:#A7DCDD;
+color:#243B39;
+}
+
+.autre{
+background:#6B6B6B;
+}
+
+.meta{
+font-size:0.9rem;
+margin-bottom:6px;
 }
 
 footer{
-    background:#213735;
-    color:white;
-    text-align:center;
-    padding:20px;
-    margin-top:30px;
+margin-top:40px;
+padding:20px;
+background:var(--footer);
+color:white;
+text-align:center;
 }
 
 </style>
@@ -86,21 +157,51 @@ footer{
 
 <header>
 <h1>Calendrier des événements partenaires SAAQ</h1>
+<p>Gestion et suivi des événements, congrès, colloques et partenariats</p>
 </header>
 
-<div class="filters">
-<input id="search" placeholder="Recherche...">
-<select id="categorie">
-<option value="">Toutes les catégories</option>
-<option>Congrès</option>
-<option>Colloque</option>
-<option>Symposium</option>
-<option>Sommet</option>
-<option>Salon</option>
-</select>
+<div class="container">
+
+<div class="dashboard">
+
+<div class="kpi">
+<h2 id="totalEvents">0</h2>
+<p>Événements</p>
 </div>
 
-<div class="grid" id="events"></div>
+<div class="kpi">
+<h2 id="totalVP">0</h2>
+<p>VP représentées</p>
+</div>
+
+<div class="kpi">
+<h2 id="totalCategories">0</h2>
+<p>Catégories</p>
+</div>
+
+</div>
+
+<div class="filters">
+
+<input
+type="text"
+id="search"
+placeholder="Recherche..."
+>
+
+<select id="vpFilter">
+<option value="">Toutes les VP</option>
+</select>
+
+<select id="categorieFilter">
+<option value="">Toutes les catégories</option>
+</select>
+
+</div>
+
+<div id="events" class="events"></div>
+
+</div>
 
 <footer>
 Calendrier des événements partenaires SAAQ
@@ -113,135 +214,227 @@ const events = [
 {
 titre:"Rencontre au Sommet 2026",
 categorie:"Congrès",
-date:"9-10 novembre",
 vp:"VPASRR",
+date:"9-10 novembre",
 organisateur:"CCAQ"
 },
 
 {
 titre:"L'annuel de l'AMVOQ",
 categorie:"Congrès",
-date:"23-25 octobre",
 vp:"VPASRR",
+date:"23-25 octobre",
 organisateur:"AMVOQ"
 },
 
 {
 titre:"Journées francophones de sécurité routière",
 categorie:"Colloque",
-date:"19-21 octobre",
 vp:"VPSA",
+date:"19-21 octobre",
 organisateur:"Université de Sherbrooke"
+},
+
+{
+titre:"Congrès Walk21",
+categorie:"Congrès",
+vp:"VPSA",
+date:"4-8 octobre 2027",
+organisateur:"Piétons Québec"
 },
 
 {
 titre:"Congrès ANCAI",
 categorie:"Congrès",
+vp:"VPCRSV",
 date:"23-26 avril 2026",
-vp:"VPCRSV",
 organisateur:"ANCAI"
-},
-
-{
-titre:"Congrès APMLQ",
-categorie:"Congrès",
-date:"24-25 avril 2026",
-vp:"VPCRSV",
-organisateur:"APMLQ"
-},
-
-{
-titre:"Congrès ADPQ",
-categorie:"Congrès",
-date:"26-28 mai 2026",
-vp:"VPCRSV",
-organisateur:"ADPQ"
 },
 
 {
 titre:"Congrès APDQ",
 categorie:"Congrès",
-date:"15-17 octobre 2026",
 vp:"VPCRSV",
+date:"15-17 octobre 2026",
 organisateur:"APDQ"
+},
+
+{
+titre:"Congrès ADPQ",
+categorie:"Congrès",
+vp:"VPCRSV",
+date:"26-28 mai 2026",
+organisateur:"ADPQ"
 },
 
 {
 titre:"Sommet international Cybersécurité",
 categorie:"Sommet",
-date:"Octobre",
 vp:"DGAIEP",
+date:"Octobre",
 organisateur:"Groupe Le Point"
+},
+
+{
+titre:"Salon national de l'Éducation",
+categorie:"Salon",
+vp:"VPSA",
+date:"Fin septembre - début octobre",
+organisateur:"Événement Carrières"
 },
 
 {
 titre:"Symposium Gartner Toronto",
 categorie:"Symposium",
-date:"3-4 novembre 2026",
 vp:"VPEN",
+date:"3-4 novembre 2026",
 organisateur:"Gartner"
 },
 
 {
 titre:"JIQ 2026",
 categorie:"Colloque",
-date:"18 novembre 2026",
 vp:"VPEN",
+date:"18 novembre 2026",
 organisateur:"Réseau Action TI"
-},
-
-{
-titre:"Salon national de l'Éducation",
-categorie:"Salon",
-date:"Fin septembre - début octobre",
-vp:"VPSA",
-organisateur:"Événement Carrières"
 }
 
 ];
 
-const container = document.getElementById("events");
+const vpSelect =
+document.getElementById("vpFilter");
 
-function render(){
+const categoriesSelect =
+document.getElementById("categorieFilter");
+
+const vpList =
+[...new Set(events.map(e=>e.vp))];
+
+vpList.forEach(vp=>{
+vpSelect.innerHTML += `
+<option>${vp}</option>
+`;
+});
+
+const catList =
+[...new Set(events.map(e=>e.categorie))];
+
+catList.forEach(cat=>{
+categoriesSelect.innerHTML += `
+<option>${cat}</option>
+`;
+});
+
+document.getElementById("totalEvents")
+.innerText = events.length;
+
+document.getElementById("totalVP")
+.innerText = vpList.length;
+
+document.getElementById("totalCategories")
+.innerText = catList.length;
+
+function renderEvents(){
+
+const search =
+document.getElementById("search")
+.value.toLowerCase();
+
+const vp =
+document.getElementById("vpFilter")
+.value;
+
+const cat =
+document.getElementById("categorieFilter")
+.value;
+
+const container =
+document.getElementById("events");
 
 container.innerHTML="";
 
-const search = document.getElementById("search").value.toLowerCase();
-const categorie = document.getElementById("categorie").value;
+const results = events.filter(event=>{
 
-events
-.filter(e =>
-e.titre.toLowerCase().includes(search)
-&&
-(categorie === "" || e.categorie === categorie)
-)
-.forEach(event=>{
+const t =
+event.titre.toLowerCase()
+.includes(search);
 
-let cls="congres";
+const v =
+vp === "" ||
+event.vp === vp;
 
-if(event.categorie==="Colloque") cls="colloque";
-if(event.categorie==="Symposium") cls="symposium";
-if(event.categorie==="Sommet") cls="sommet";
-if(event.categorie==="Salon") cls="salon";
+const c =
+cat === "" ||
+event.categorie === cat;
+
+return t && v && c;
+
+});
+
+results.forEach(event=>{
+
+let css="autre";
+
+if(event.categorie==="Congrès")
+css="congres";
+
+if(event.categorie==="Colloque")
+css="colloque";
+
+if(event.categorie==="Sommet")
+css="sommet";
+
+if(event.categorie==="Symposium")
+css="symposium";
+
+if(event.categorie==="Salon")
+css="salon";
 
 container.innerHTML += `
+
 <div class="card">
-<span class="badge ${cls}">${event.categorie}</span>
+
+<span class="badge ${css}">
+${event.categorie}
+</span>
+
 <h3>${event.titre}</h3>
-<p><strong>VP :</strong> ${event.vp}</p>
-<p><strong>Organisateur :</strong> ${event.organisateur}</p>
-<p class="date">${event.date}</p>
+
+<div class="meta">
+<b>VP :</b> ${event.vp}
 </div>
+
+<div class="meta">
+<b>Organisateur :</b>
+${event.organisateur}
+</div>
+
+<div class="meta">
+<b>Date :</b>
+${event.date}
+</div>
+
+</div>
+
 `;
 
 });
 
 }
 
-document.getElementById("search").addEventListener("input",render);
-document.getElementById("categorie").addEventListener("change",render);
+document
+.getElementById("search")
+.addEventListener("input",renderEvents);
 
-render();
+document
+.getElementById("vpFilter")
+.addEventListener("change",renderEvents);
+
+document
+.getElementById("categorieFilter")
+.addEventListener("change",renderEvents);
+
+renderEvents();
 
 </script>
 
